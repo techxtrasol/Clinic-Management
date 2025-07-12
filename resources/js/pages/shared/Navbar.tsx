@@ -2,145 +2,97 @@
 
 import { useState } from "react"
 import { Link, usePage } from "@inertiajs/react"
-import { Menu, X, Calendar, Users, Phone, Stethoscope } from "lucide-react"
+import { Menu, X, Calendar, Users, Phone, Stethoscope, Home, ClipboardList, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
 import { ModeToggle } from "@/components/mode-toggle"
 
 export default function Navbar() {
   const { auth } = usePage().props
-  const [isOpen, setIsOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
-  const services = [
+  const navItems = [
+    { name: "Home", href: "/", icon: Home },
     {
-      title: "Patient Management",
-      description: "Comprehensive patient record system",
+      name: "Services",
       href: "#services",
-      icon: Users,
+      icon: Stethoscope, // Icon for the parent service item
+      subItems: [
+        { name: "Patient Management", icon: Users, href: "#services" },
+        { name: "Appointment Scheduling", icon: Calendar, href: "#services" },
+        { name: "Billing & Invoicing", icon: ClipboardList, href: "#services" },
+      ],
     },
-    {
-      title: "Appointment Scheduling",
-      description: "Smart scheduling and calendar management",
-      href: "#services",
-      icon: Calendar,
-    },
-    {
-      title: "Billing & Invoicing",
-      description: "Automated billing and payment processing",
-      href: "#services",
-      icon: Phone,
-    },
-    {
-      title: "Medical Records",
-      description: "Secure digital health records",
-      href: "#services",
-      icon: Stethoscope,
-    },
+    { name: "Our Doctors", href: "#doctors", icon: Users },
+    { name: "Contact", href: "#contact", icon: Phone },
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300">
-      <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+    <header className="sticky top-0 z-50 border-b border-border  backdrop-blur">
+      <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 transition-transform duration-200 hover:scale-105">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold transition-all duration-200 hover:bg-primary/20">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[var(--radius)] bg-primary/10 text-primary">
             🏥
           </div>
-          <span className="text-2xl font-bold tracking-tight text-foreground">ClinicPro</span>
+          <span className="text-lg font-semibold">Clinico</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex lg:items-center lg:space-x-6">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="/"
-                  className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                >
-                  Home
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+        <nav className="hidden items-center gap-6 md:flex">
+          {navItems.map((item) =>
+            !item.subItems ? (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+              >
+                {item.name}
+              </Link>
+            ) : (
+              <div key={item.name} className="group relative">
+                <button className="flex items-center gap-1 text-sm font-medium text-foreground/80 hover:text-foreground">
+                  {item.name}
+                  <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
+                <div className="absolute left-0 top-full mt-2 hidden w-48 rounded-md border bg-popover p-2 shadow-lg group-hover:block animate-in fade-in-0 zoom-in-95 data-[state=open]:animate-out data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2">
+                  {item.subItems.map((subItem) => (
+                    <Link
+                      key={subItem.name}
+                      href={subItem.href}
+                      className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                      <subItem.icon className="h-4 w-4 text-primary" />
+                      {subItem.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ),
+          )}
+        </nav>
 
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="h-9">Services</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    {services.map((service) => (
-                      <li key={service.title}>
-                        <NavigationMenuLink asChild>
-                          <a
-                            href={service.href}
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground group"
-                          >
-                            <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                              <service.icon className="h-4 w-4 text-primary group-hover:text-accent-foreground transition-colors" />
-                              {service.title}
-                            </div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground group-hover:text-accent-foreground/80">
-                              {service.description}
-                            </p>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="#doctors"
-                  className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                >
-                  <Users className="mr-2 h-4 w-4" />
-                  Our Doctors
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="#contact"
-                  className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                >
-                  <Phone className="mr-2 h-4 w-4" />
-                  Contact
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
-
-        {/* Desktop Actions */}
-        <div className="hidden lg:flex lg:items-center lg:space-x-4">
+        {/* Desktop Auth + Theme */}
+        <div className="hidden items-center gap-4 md:flex">
           <ModeToggle />
-
           {auth?.user ? (
             <Link
               href={route("dashboard")}
-              className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-all duration-200 hover:bg-primary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="rounded-[var(--radius)] bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               Dashboard
             </Link>
           ) : (
-            <div className="flex items-center space-x-2">
+            <div className="flex gap-2">
               <Link
                 href={route("login")}
-                className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-all duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="rounded-[var(--radius)] border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 Log in
               </Link>
               <Link
                 href={route("register")}
-                className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-all duration-200 hover:bg-primary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="rounded-[var(--radius)] bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Register
               </Link>
@@ -149,92 +101,82 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <div className="flex items-center space-x-2 lg:hidden">
+        <div className="flex items-center gap-2 md:hidden">
           <ModeToggle />
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="h-9 w-9">
-                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                <span className="sr-only">Toggle menu</span>
+                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                <span className="sr-only">Toggle mobile menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col space-y-6 mt-8">
-                {/* Mobile Navigation Links */}
-                <div className="space-y-4">
-                  <Link
-                    href="/"
-                    className="block text-lg font-medium transition-colors hover:text-primary"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Home
-                  </Link>
-
-                  <div className="space-y-3">
-                    <p className="text-lg font-medium">Services</p>
-                    <div className="pl-4 space-y-3">
-                      {services.map((service) => (
-                        <a
-                          key={service.title}
-                          href={service.href}
-                          className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <service.icon className="h-4 w-4" />
-                          {service.title}
-                        </a>
-                      ))}
-                    </div>
+            <SheetContent side="right" className="flex w-[280px] flex-col justify-between p-4">
+              {/* Mobile Nav Items */}
+              <div className="mt-8 flex-1 space-y-2">
+                {navItems.map((item) => (
+                  <div key={item.name}>
+                    {!item.subItems ? (
+                      <Link
+                        href={item.href}
+                        className="flex items-center gap-3 rounded-md px-3 py-3 text-lg font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {item.icon && <item.icon className="h-5 w-5 text-primary" />}
+                        {item.name}
+                      </Link>
+                    ) : (
+                      <>
+                        <p className="flex items-center gap-3 rounded-md px-3 py-3 text-lg font-medium">
+                          {item.icon && <item.icon className="h-5 w-5 text-primary" />}
+                          {item.name}
+                        </p>
+                        <div className="ml-6 space-y-1 border-l border-border pl-4">
+                          {item.subItems.map((subItem) => (
+                            <Link
+                              key={subItem.name}
+                              href={subItem.href}
+                              className="flex items-center gap-2 rounded-md px-3 py-2 text-base hover:bg-accent hover:text-accent-foreground transition-colors"
+                              onClick={() => setMobileOpen(false)}
+                            >
+                              <subItem.icon className="h-4 w-4 text-primary" />
+                              {subItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
+                ))}
+              </div>
 
+              {/* Mobile Auth Buttons */}
+              <div className="border-t border-border pt-4">
+                {auth?.user ? (
                   <Link
-                    href="#doctors"
-                    className="flex items-center gap-2 text-lg font-medium transition-colors hover:text-primary"
-                    onClick={() => setIsOpen(false)}
+                    href={route("dashboard")}
+                    className="block w-full rounded-[var(--radius)] bg-primary px-4 py-2 text-center font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                    onClick={() => setMobileOpen(false)}
                   >
-                    <Users className="h-4 w-4" />
-                    Our Doctors
+                    Dashboard
                   </Link>
-
-                  <Link
-                    href="#contact"
-                    className="flex items-center gap-2 text-lg font-medium transition-colors hover:text-primary"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Phone className="h-4 w-4" />
-                    Contact
-                  </Link>
-                </div>
-
-                {/* Mobile Auth Buttons */}
-                <div className="border-t pt-6 space-y-3">
-                  {auth?.user ? (
+                ) : (
+                  <div className="space-y-2">
                     <Link
-                      href={route("dashboard")}
-                      className="flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
-                      onClick={() => setIsOpen(false)}
+                      href={route("login")}
+                      className="block w-full rounded-[var(--radius)] border border-input bg-background px-4 py-2 text-center text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                      onClick={() => setMobileOpen(false)}
                     >
-                      Dashboard
+                      Log in
                     </Link>
-                  ) : (
-                    <>
-                      <Link
-                        href={route("login")}
-                        className="flex h-10 w-full items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        Log in
-                      </Link>
-                      <Link
-                        href={route("register")}
-                        className="flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        Register
-                      </Link>
-                    </>
-                  )}
-                </div>
+                    <Link
+                      href={route("register")}
+                      className="block w-full rounded-[var(--radius)] bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Register
+                    </Link>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>

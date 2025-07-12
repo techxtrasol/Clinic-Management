@@ -1,97 +1,110 @@
+"use client"
+
+// Removed: import { useTheme } from "next-themes"
 import Layout from "@/app/layout"
 import Navbar from "./shared/Navbar"
 import Hero from "@/pages/Hero"
-import { Users, Calendar, FileText, Activity, Shield, Clock, Stethoscope, TrendingUp, Award } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Reviews from "@/Components/Reviews"
+import { Users, Calendar, Shield, Clock, Stethoscope, TrendingUp, Award, FlaskConical } from "lucide-react"
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Footer from "./shared/Footer"
+import { MagicCard } from "@/components/magicui/magic-card" // Import MagicCard
+import { BorderBeam } from "@/components/magicui/border-beam" // Import BorderBeam
 
 export default function Welcome() {
+  // Removed: const { theme } = useTheme()
+
   const features = [
     {
+      icon: Stethoscope,
+      title: "Comprehensive Health Checkups",
+      description: "Regular health assessments and personalized wellness plans to keep you at your best.",
+      benefits: ["Full body examinations", "Preventive screenings", "Personalized wellness plans"],
+    },
+    {
       icon: Users,
-      title: "Patient Management",
-      description: "Complete patient profiles with medical history, contact information, and treatment records.",
-      features: ["Digital health records", "Patient portal access", "Medical history tracking"],
-    },
-    {
-      icon: Calendar,
-      title: "Smart Scheduling",
-      description: "Intelligent appointment booking with automated reminders and calendar synchronization.",
-      features: ["Online booking", "SMS reminders", "Calendar sync"],
-    },
-    {
-      icon: FileText,
-      title: "Digital Records",
-      description: "Secure, searchable medical records with easy access and sharing capabilities.",
-      features: ["Cloud storage", "Quick search", "Secure sharing"],
-    },
-    {
-      icon: Activity,
-      title: "Clinical Analytics",
-      description: "Advanced reporting and insights to optimize your practice performance.",
-      features: ["Performance metrics", "Financial reports", "Patient insights"],
+      title: "Specialized Consultations",
+      description: "Access to expert specialists across various medical fields for targeted care.",
+      benefits: ["Cardiology", "Dermatology", "Pediatrics", "Endocrinology"],
     },
     {
       icon: Shield,
-      title: "Security & Compliance",
-      description: "HIPAA-compliant platform with enterprise-grade security and data protection.",
-      features: ["Data encryption", "Access controls", "Audit logs"],
+      title: "Preventive Care Programs",
+      description: "Proactive health management programs designed to prevent illness and promote long-term well-being.",
+      benefits: ["Vaccinations", "Chronic disease management", "Health education"],
+    },
+    {
+      icon: FlaskConical,
+      title: "Advanced Diagnostic Services",
+      description: "State-of-the-art diagnostic tools for accurate and timely health assessments.",
+      benefits: ["Lab testing", "Imaging (X-ray, MRI)", "Pathology services"],
     },
     {
       icon: Clock,
-      title: "24/7 Support",
-      description: "Round-the-clock technical support and system monitoring for peace of mind.",
-      features: ["Live chat support", "System monitoring", "Training resources"],
+      title: "24/7 Emergency & Urgent Care",
+      description: "Immediate medical attention for urgent health concerns, available around the clock.",
+      benefits: ["Walk-in appointments", "Emergency consultations", "Rapid response team"],
+    },
+    {
+      icon: Calendar,
+      title: "Telemedicine & Virtual Visits",
+      description: "Convenient online consultations from the comfort of your home, connecting you with our doctors.",
+      benefits: ["Video consultations", "Prescription refills", "Follow-up care"],
     },
   ]
 
   return (
-    <Layout title="Welcome to ClinicPro">
+    <Layout title="Welcome to Clinico">
       <Navbar />
       <Hero />
-
       {/* Features Section */}
-      <section className="py-20 bg-white dark:bg-slate-800">
+      <section className="py-20 bg-white dark:bg-slate-700">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 animate-fade-in-up">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-              Everything you need to run your clinic
+              Your Health, Our Comprehensive Care
             </h2>
             <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">
-              Comprehensive tools designed specifically for healthcare professionals
+              Discover the wide range of services Clinico offers to support your well-being.
             </p>
           </div>
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 animate-fade-in-up-stagger">
             {features.map((feature, index) => (
-              <Card
-                key={feature.title}
-                className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
-              >
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 group-hover:bg-blue-600 transition-colors duration-300 dark:bg-blue-900/30 dark:group-hover:bg-blue-600">
-                      <feature.icon className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors duration-300 dark:text-blue-400 dark:group-hover:text-white" />
+              <div key={feature.title} className="relative" style={{ animationDelay: `${0.1 * index}s` }}>
+                {/* Outer Card for BorderBeam and overall container */}
+                <MagicCard
+                  className="relative z-10 h-full overflow-hidden rounded-[var(--radius)] border border-border bg-card shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  gradientColor="#D9D9D955" // Static gradient color for pure React
+                >
+                  {/* BorderBeam directly on the MagicCard */}
+                  <BorderBeam duration={8} size={100} />
+
+                  {/* Card content elements, with their own padding */}
+                  <CardHeader className="p-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 group-hover:bg-blue-600 transition-colors duration-300 dark:bg-blue-900/30 dark:group-hover:bg-blue-600">
+                        <feature.icon className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors duration-300 dark:text-blue-400 dark:group-hover:text-white" />
+                      </div>
+                      <CardTitle className="text-lg">{feature.title}</CardTitle>
                     </div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base mb-4">{feature.description}</CardDescription>
-                  <ul className="space-y-2">
-                    {feature.features.map((item, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center text-sm text-slate-600 dark:text-slate-300">
-                        <div className="mr-2 h-1.5 w-1.5 rounded-full bg-blue-600" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <CardDescription className="text-base mb-4">{feature.description}</CardDescription>
+                    <ul className="space-y-2">
+                      {feature.benefits.map((item, benefitIndex) => (
+                        <li key={benefitIndex} className="flex items-center text-sm text-slate-600 dark:text-slate-300">
+                          <div className="mr-2 h-1.5 w-1.5 rounded-full bg-blue-600" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </MagicCard>
+              </div>
             ))}
           </div>
         </div>
       </section>
-
       {/* Stats Section */}
       <section className="py-16 bg-slate-50 dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -100,33 +113,55 @@ export default function Welcome() {
               <div className="flex items-center justify-center mb-2">
                 <Stethoscope className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">500+</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Healthcare Providers</div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">50+</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Experienced Doctors</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
                 <Users className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">50K+</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Patients Managed</div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">10K+</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Happy Patients</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
                 <TrendingUp className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">99.9%</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">System Uptime</div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">98%</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Successful Treatments</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
                 <Award className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">4.9/5</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Customer Rating</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Patient Satisfaction</div>
             </div>
           </div>
         </div>
       </section>
+      <Reviews />
+      <Footer />
+      {/* Custom CSS for Animations (only fade-in-up remains) */}
+      <style jsx>{`
+      @keyframes fade-in-up {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in-up {
+        animation: fade-in-up 0.8s ease-out forwards;
+      }
+      .animate-fade-in-up-stagger {
+        animation: fade-in-up 0.8s ease-out forwards;
+        /* Staggering handled by inline style animation-delay */
+      }
+    `}</style>
     </Layout>
   )
 }
