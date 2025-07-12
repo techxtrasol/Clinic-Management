@@ -6,6 +6,7 @@ import { FormEventHandler } from 'react';
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +23,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 type ProfileForm = {
     name: string;
     email: string;
+    phone: string;
 };
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
@@ -30,6 +32,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
+        phone: auth.user.phone || '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -40,13 +43,45 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
         });
     };
 
+    const getRoleBadgeColor = (role: string) => {
+        switch (role) {
+            case 'admin':
+                return 'bg-red-100 text-red-800';
+            case 'doctor':
+                return 'bg-blue-100 text-blue-800';
+            case 'nurse':
+                return 'bg-green-100 text-green-800';
+            case 'staff':
+                return 'bg-yellow-100 text-yellow-800';
+            case 'patient':
+                return 'bg-gray-100 text-gray-800';
+            default:
+                return 'bg-gray-100 text-gray-800';
+        }
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Profile settings" />
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Profile information" description="Update your name and email address" />
+                    <HeadingSmall title="Profile information" description="Update your personal information" />
+
+                    {/* Role Display */}
+                    <div className="p-4 border rounded-lg bg-muted/50">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="font-medium">Your Role</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Your role is managed by administrators and cannot be changed here.
+                                </p>
+                            </div>
+                            <Badge className={getRoleBadgeColor(auth.user.role)}>
+                                {auth.user.role}
+                            </Badge>
+                        </div>
+                    </div>
 
                     <form onSubmit={submit} className="space-y-6">
                         <div className="grid gap-2">
@@ -80,6 +115,23 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             />
 
                             <InputError className="mt-2" message={errors.email} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="phone">Phone number</Label>
+
+                            <Input
+                                id="phone"
+                                type="tel"
+                                className="mt-1 block w-full"
+                                value={data.phone}
+                                onChange={(e) => setData('phone', e.target.value)}
+                                required
+                                autoComplete="tel"
+                                placeholder="Phone number"
+                            />
+
+                            <InputError className="mt-2" message={errors.phone} />
                         </div>
 
                         {mustVerifyEmail && auth.user.email_verified_at === null && (

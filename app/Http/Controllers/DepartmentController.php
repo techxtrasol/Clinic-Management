@@ -4,62 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DepartmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $departments = Department::latest()->get();
+        return Inertia::render('departments/DepartmentsList', [
+            'departments' => $departments,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Department $department)
     {
-        //
+        return Inertia::render('departments/DepartmentView', [
+            'department' => $department,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Department $department)
+    public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+        ]);
+        $department = Department::create($data);
+        return redirect()->route('departments.index')->with('success', 'Department created.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Department $department)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+        ]);
+        $department->update($data);
+        return redirect()->route('departments.show', $department)->with('success', 'Department updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Department $department)
     {
-        //
+        $department->delete();
+        return redirect()->route('departments.index')->with('success', 'Department deleted.');
     }
 }

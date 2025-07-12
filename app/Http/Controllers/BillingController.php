@@ -4,62 +4,55 @@ namespace App\Http\Controllers;
 
 use App\Models\Billing;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BillingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $billings = Billing::with(['patient.user', 'appointment'])->latest()->get();
+        return Inertia::render('billing/BillsList', [
+            'billings' => $billings,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Billing $billing)
     {
-        //
+        $billing->load(['patient.user', 'appointment']);
+        return Inertia::render('billing/BillView', [
+            'billing' => $billing,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Billing $billing)
+    public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'patient_id' => 'required|exists:patients,id',
+            'appointment_id' => 'nullable|exists:appointments,id',
+            'amount' => 'required|numeric',
+            'status' => 'required|string',
+            'billed_at' => 'required|date',
+            'notes' => 'nullable|string',
+        ]);
+        $billing = Billing::create($data);
+        return redirect()->route('billing.index')->with('success', 'Bill created.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Billing $billing)
     {
-        //
+        $data = $request->validate([
+            'amount' => 'required|numeric',
+            'status' => 'required|string',
+            'billed_at' => 'required|date',
+            'notes' => 'nullable|string',
+        ]);
+        $billing->update($data);
+        return redirect()->route('billing.show', $billing)->with('success', 'Bill updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Billing $billing)
     {
-        //
+        $billing->delete();
+        return redirect()->route('billing.index')->with('success', 'Bill deleted.');
     }
 }
